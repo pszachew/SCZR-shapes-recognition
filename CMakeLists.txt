@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.0)
+
+project(recognition)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+add_compile_options(-Wall -Wextra -pedantic)
+
+find_package(OpenCV REQUIRED)
+find_package(PkgConfig)
+
+pkg_check_modules(GTKMM gtkmm-3.0)
+
+include_directories(
+    include
+    ${OpenCV_INCLUDE_DIRS}
+    ${GTKMM_INCLUDE_DIRS}
+)
+
+add_executable(capture capture.cpp)
+target_link_libraries(capture ${OpenCV_LIBS})
