@@ -25,6 +25,9 @@ void loadConfig(){
 }
 
 int main(){
+
+    std::cout<<"convert"<<std::endl;
+
 	cv::Mat cameraFeed, HSV, threshold;
 
     loadConfig();

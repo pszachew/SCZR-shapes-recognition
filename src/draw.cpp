@@ -6,6 +6,9 @@
 #include "pqueue.hpp"
 
 int main(){
+
+    std::cout<<"draw"<<std::endl;
+
 	cv::Mat cameraFeed, threshold;
     ProcBC m_in;
     ProcCD m_out;

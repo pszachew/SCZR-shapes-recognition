@@ -7,6 +7,8 @@
 
 int main(){
 
+    std::cout<<"capture"<<std::endl;
+
     cv::VideoCapture capture(0);
 	cv::Mat cameraFeed;
 
