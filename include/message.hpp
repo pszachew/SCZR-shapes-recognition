@@ -4,16 +4,19 @@
 #include <chrono>
 #include <opencv2/opencv.hpp>
 
+#define MAX_PIXELS 640
+#define IMG_SIZE MAX_PIXELS * MAX_PIXELS * 3
+
 
 typedef struct ProcAB
 {
-    cv::Mat img;
+    uint8_t img[IMG_SIZE];
 } ProcAB;
 
 typedef struct ProcBC
 {
-    cv::Mat threshold;
-    cv::Mat cameraFeed;
+    uint8_t threshold[IMG_SIZE];
+    uint8_t cameraFeed[IMG_SIZE];
 } ProcBC;
 
 typedef struct ProcCD

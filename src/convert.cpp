@@ -28,7 +28,7 @@ int main(){
 
     std::cout<<"convert"<<std::endl;
 
-	cv::Mat cameraFeed, HSV, threshold;
+	cv::Mat HSV, threshold;
 
     loadConfig();
 
@@ -56,12 +56,12 @@ int main(){
         up(pqA->getSemid(), BIN);
         up(pqA->getSemid(), EMPTY);
 
-        cameraFeed=m_in.img;
+        cv::Mat cameraFeed(MAX_PIXELS, MAX_PIXELS, CV_8UC3, m_in.img);
         cv::cvtColor(cameraFeed,HSV,cv::COLOR_BGR2HSV); //convert to HSV
         cv::inRange(HSV,cv::Scalar(H_MIN,S_MIN,V_MIN),cv::Scalar(H_MAX,S_MAX,V_MAX),threshold); //threshold image based of config filters
 
-        m_outC.cameraFeed=cameraFeed;
-        m_outC.threshold=threshold;
+        memcpy(&m_outC.cameraFeed, cameraFeed.data, sizeof(uint8_t) * IMG_SIZE);
+        memcpy(&m_outC.threshold, cameraFeed.data, sizeof(uint8_t) * IMG_SIZE);
         
         down(pqB->getSemid(), EMPTY);
         down(pqB->getSemid(), BIN);        

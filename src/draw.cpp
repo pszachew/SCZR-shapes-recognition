@@ -9,7 +9,6 @@ int main(){
 
     std::cout<<"draw"<<std::endl;
 
-	cv::Mat cameraFeed, threshold;
     ProcBC m_in;
     ProcCD m_out;
 
@@ -31,8 +30,9 @@ int main(){
         
         up(pqB->getSemid(), BIN);
         up(pqB->getSemid(), EMPTY);
-        cameraFeed=m_in.cameraFeed;
-        threshold=m_in.threshold;
+
+        cv::Mat cameraFeed(MAX_PIXELS, MAX_PIXELS, CV_8UC3, m_in.cameraFeed);
+        cv::Mat threshold(MAX_PIXELS, MAX_PIXELS, CV_8UC3, m_in.threshold);
         
         std::vector<std::vector<cv::Point> > contours;
         std::vector<cv::Vec4i> hierarchy;

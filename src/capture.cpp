@@ -22,7 +22,7 @@ int main(){
     while(capture.read(cameraFeed) && cv::waitKey(30) != ' ')
     {
         cv::imshow("Original",cameraFeed);
-        message.img=cameraFeed;
+        memcpy(&message.img, cameraFeed.data, sizeof(uint8_t) * IMG_SIZE);
         down(pqA->getSemid(), EMPTY);
         down(pqA->getSemid(), BIN);
 

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-./init
+./init &
 sleep 1
-./capture
+./capture &
 sleep 1
-./convert
+./convert &
 sleep 1
 ./draw
 
