@@ -40,32 +40,35 @@ int main()
 
     std::cout<<"\nZainicjowano pamiec wspoldzielona\n";
 
-    // ProcCD m_inC; //times from draw
-    // ProcBD m_inB; //times from convert
+    ProcCD m_inC; //times from draw
+    ProcBD m_inB; //times from convert
     
-    // int shmidD = shmget(KEY_D, sizeof(PQueue<ProcBD>),0);
-    // PQueue<ProcBD> *pqD = (PQueue<ProcBD> *)shmat(shmidD, NULL, 0);
+    int shmidD = shmget(KEY_D, sizeof(PQueue<ProcBD>),0);
+    PQueue<ProcBD> *pqD = (PQueue<ProcBD> *)shmat(shmidD, NULL, 0);
 
-    // int shmidC = shmget(KEY_C, sizeof(PQueue<ProcCD>), 0);
-    // PQueue<ProcCD> *pqC = (PQueue<ProcCD> *)shmat(shmidC, NULL, 0);
+    int shmidC = shmget(KEY_C, sizeof(PQueue<ProcCD>), 0);
+    PQueue<ProcCD> *pqC = (PQueue<ProcCD> *)shmat(shmidC, NULL, 0);
 
 
-    //     down(pqD->getSemid(), FULL);
-    //     down(pqD->getSemid(), BIN);        
+    while(1){
+        down(pqD->getSemid(), FULL);
+        down(pqD->getSemid(), BIN);        
         
-    //     m_inB=pqD->pop();
+        m_inB=pqD->pop();
         
-    //     up(pqD->getSemid(), BIN);
-    //     up(pqD->getSemid(), EMPTY);
+        up(pqD->getSemid(), BIN);
+        up(pqD->getSemid(), EMPTY);
 
-    //     down(pqC->getSemid(), FULL);
-    //     down(pqC->getSemid(), BIN);        
         
-    //     m_inC=pqC->pop();
+
+        down(pqC->getSemid(), FULL);
+        down(pqC->getSemid(), BIN);        
         
-    //     up(pqC->getSemid(), BIN);
-    //     up(pqC->getSemid(), EMPTY);
+        m_inC=pqC->pop();
+        
+        up(pqC->getSemid(), BIN);
+        up(pqC->getSemid(), EMPTY);
+    }
 
-
-    // return 0;
+    return 0;
 }

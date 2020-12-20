@@ -46,23 +46,24 @@ int main(){
    
     while(cv::waitKey(30) != ' '){
 
-        auto t1 = std::chrono::high_resolution_clock::now(); //receive image - timestamp
-
         down(pqA->getSemid(), FULL);
-        down(pqA->getSemid(), BIN);        
+        down(pqA->getSemid(), BIN);
         
         m_in=pqA->pop();
         
         up(pqA->getSemid(), BIN);
         up(pqA->getSemid(), EMPTY);
 
-        cv::Mat cameraFeed(FRAME_HEIGHT, FRAME_WIDTH, CV_8UC3, m_in.img);
+        auto receive_ts = std::chrono::high_resolution_clock::now(); // timestamp receive from proccess A (capture)
+
+        cv::Mat cameraFeed(FRAME_WIDTH, FRAME_HEIGHT, CV_8UC3, m_in.img);
         cv::cvtColor(cameraFeed,HSV,cv::COLOR_BGR2HSV); //convert to HSV
         cv::inRange(HSV,cv::Scalar(H_MIN,S_MIN,V_MIN),cv::Scalar(H_MAX,S_MAX,V_MAX),threshold); //threshold image based of config filters
 
         memcpy(&m_outC.cameraFeed, cameraFeed.data, sizeof(uint8_t) * IMG_SIZE);
         memcpy(&m_outC.threshold, threshold.data, sizeof(uint8_t) * IMG_SIZE/3);
-        
+        m_outC.send_ts = std::chrono::high_resolution_clock::now(); // timestamp send to proccess C (draw)
+    
         down(pqB->getSemid(), EMPTY);
         down(pqB->getSemid(), BIN);        
         
@@ -71,10 +72,9 @@ int main(){
         up(pqB->getSemid(), BIN);
         up(pqB->getSemid(), FULL);
 
-        auto t2 = std::chrono::high_resolution_clock::now(); // show images - timestamp
 
-        m_outD.time_in=t1;
-        m_outD.time_out=t2;
+        m_outD.receive_ts = receive_ts;
+        m_outD.send_ts = m_outC.send_ts;
 
         down(pqD->getSemid(), EMPTY);
         down(pqD->getSemid(), BIN);        

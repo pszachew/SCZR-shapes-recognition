@@ -11,7 +11,6 @@ int main(){
 
     ProcBC m_in;
     ProcCD m_out;
-
     
     int shmidC = shmget(KEY_C, sizeof(PQueue<ProcCD>), 0);
     PQueue<ProcCD> *pqC = (PQueue<ProcCD> *)shmat(shmidC, NULL, 0);
@@ -21,8 +20,6 @@ int main(){
 
     while(cv::waitKey(30) != ' '){
 
-        auto t1 = std::chrono::high_resolution_clock::now(); //receive images - timestamp
-
         down(pqB->getSemid(), FULL);
         down(pqB->getSemid(), BIN);        
         
@@ -31,8 +28,10 @@ int main(){
         up(pqB->getSemid(), BIN);
         up(pqB->getSemid(), EMPTY);
 
-        cv::Mat cameraFeed(FRAME_HEIGHT, FRAME_WIDTH, CV_8UC3, m_in.cameraFeed);
-        cv::Mat threshold(FRAME_HEIGHT, FRAME_WIDTH, CV_8UC1, m_in.threshold);
+        auto receive_ts = std::chrono::high_resolution_clock::now(); // timestamp receive from proccess B (convert)
+
+        cv::Mat cameraFeed(FRAME_WIDTH, FRAME_HEIGHT, CV_8UC3, m_in.cameraFeed);
+        cv::Mat threshold(FRAME_WIDTH, FRAME_HEIGHT, CV_8UC1, m_in.threshold);
         
         std::vector<std::vector<cv::Point> > contours;
         std::vector<cv::Vec4i> hierarchy;
@@ -43,10 +42,12 @@ int main(){
             drawContours(cameraFeed, contours, (int)i, cv::Scalar(255, 0, 0), 2, cv::LINE_8, hierarchy, 0);
         }
 
-        auto t2 = std::chrono::high_resolution_clock::now(); // show images - timestamp
+        cv::imshow("Original",cameraFeed);
+        cv::imshow("Filtered",threshold);
+        auto show_ts = std::chrono::high_resolution_clock::now(); // show images - timestamp
 
-        m_out.time_in=t1;
-        m_out.time_out=t2;
+        m_out.receive_ts = receive_ts;
+        m_out.show_ts = show_ts;
 
         down(pqC->getSemid(), EMPTY);
         down(pqC->getSemid(), BIN);        
@@ -55,10 +56,5 @@ int main(){
         
         up(pqC->getSemid(), BIN);
         up(pqC->getSemid(), FULL);
-
-        cv::imshow("Original",cameraFeed);
-        cv::imshow("Filtered",threshold);
-        
     }
-
 }
