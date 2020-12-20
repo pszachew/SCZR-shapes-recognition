@@ -31,8 +31,8 @@ int main(){
         up(pqB->getSemid(), BIN);
         up(pqB->getSemid(), EMPTY);
 
-        cv::Mat cameraFeed(MAX_PIXELS, MAX_PIXELS, CV_8UC3, m_in.cameraFeed);
-        cv::Mat threshold(MAX_PIXELS, MAX_PIXELS, CV_8UC3, m_in.threshold);
+        cv::Mat cameraFeed(FRAME_HEIGHT, FRAME_WIDTH, CV_8UC3, m_in.cameraFeed);
+        cv::Mat threshold(FRAME_HEIGHT, FRAME_WIDTH, CV_8UC1, m_in.threshold);
         
         std::vector<std::vector<cv::Point> > contours;
         std::vector<cv::Vec4i> hierarchy;

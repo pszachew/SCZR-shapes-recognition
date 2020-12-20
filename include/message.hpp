@@ -4,8 +4,9 @@
 #include <chrono>
 #include <opencv2/opencv.hpp>
 
-#define MAX_PIXELS 640
-#define IMG_SIZE MAX_PIXELS * MAX_PIXELS * 3
+#define FRAME_HEIGHT 640
+#define FRAME_WIDTH 480
+#define IMG_SIZE FRAME_HEIGHT * FRAME_WIDTH * 3
 
 
 typedef struct ProcAB
