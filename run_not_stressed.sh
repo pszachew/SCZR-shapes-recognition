@@ -1,13 +1,11 @@
 #!/bin/bash
 
 ./init &
-sleep 5
+sleep 3
 ./capture &
 PID=$!
-sleep 1
 ./convert &
 PID1=$!
-sleep 1
 ./draw
 PID2=$!
 

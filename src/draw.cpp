@@ -47,6 +47,7 @@ int main(){
         auto show_ts = std::chrono::high_resolution_clock::now(); // show images - timestamp
 
         m_out.receive_ts = receive_ts;
+        m_out.send_ts = m_in.send_ts;
         m_out.show_ts = show_ts;
 
         down(pqC->getSemid(), EMPTY);

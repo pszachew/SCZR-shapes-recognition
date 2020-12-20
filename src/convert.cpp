@@ -74,7 +74,7 @@ int main(){
 
 
         m_outD.receive_ts = receive_ts;
-        m_outD.send_ts = m_outC.send_ts;
+        m_outD.send_ts = m_in.send_ts;
 
         down(pqD->getSemid(), EMPTY);
         down(pqD->getSemid(), BIN);        

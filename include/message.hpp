@@ -4,8 +4,8 @@
 #include <chrono>
 #include <opencv2/opencv.hpp>
 
-#define FRAME_HEIGHT 160
-#define FRAME_WIDTH 120
+#define FRAME_HEIGHT 640
+#define FRAME_WIDTH 480
 #define IMG_SIZE FRAME_HEIGHT * FRAME_WIDTH * 3
 
 
@@ -25,6 +25,7 @@ typedef struct ProcBC
 typedef struct ProcCD
 {
   std::chrono::high_resolution_clock::time_point receive_ts;
+  std::chrono::high_resolution_clock::time_point send_ts;
   std::chrono::high_resolution_clock::time_point show_ts;
 } ProcCD;
 

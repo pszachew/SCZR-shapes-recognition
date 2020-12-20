@@ -1,4 +1,8 @@
 #include "pqueue.hpp"
+#include <vector>
+#include "matplotlibcpp.h"
+
+namespace plt = matplotlibcpp;
 
 int main() 
 {
@@ -49,7 +53,10 @@ int main()
     int shmidC = shmget(KEY_C, sizeof(PQueue<ProcCD>), 0);
     PQueue<ProcCD> *pqC = (PQueue<ProcCD> *)shmat(shmidC, NULL, 0);
 
+    std::vector<double> delayABplot;
+    std::vector<double> delayBCplot;
 
+    int i = 0;
     while(1){
         down(pqD->getSemid(), FULL);
         down(pqD->getSemid(), BIN);        
@@ -59,7 +66,8 @@ int main()
         up(pqD->getSemid(), BIN);
         up(pqD->getSemid(), EMPTY);
 
-        
+        auto delayAB = std::chrono::duration_cast<std::chrono::milliseconds>( m_inB.receive_ts - m_inB.send_ts ).count();
+        delayABplot.push_back(delayAB);
 
         down(pqC->getSemid(), FULL);
         down(pqC->getSemid(), BIN);        
@@ -68,6 +76,16 @@ int main()
         
         up(pqC->getSemid(), BIN);
         up(pqC->getSemid(), EMPTY);
+
+        auto delayBC = std::chrono::duration_cast<std::chrono::milliseconds>( m_inC.receive_ts - m_inC.send_ts ).count();
+        delayBCplot.push_back(delayBC);
+        if(i==100){
+            plt::plot(delayABplot, {{"color", "red"}});
+            plt::plot(delayBCplot, {{"color", "blue"}});
+            plt::save("./delay.png");
+            i = 0;
+        }
+        ++i;
     }
 
     return 0;
