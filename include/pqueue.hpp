@@ -4,7 +4,7 @@
 #include <sched.h>
 #include <unistd.h>
 
-/*#include "message.hpp"*/
+#include "message.hpp"
 #include "semaphoreop.hpp"
 
 #define CAP 10

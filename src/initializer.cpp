@@ -15,6 +15,9 @@ int main()
     int semid_C = semget(SKEY_C, SEM_NUM, IPC_CREAT | 0600);
     int semid_D = semget(SKEY_D, SEM_NUM, IPC_CREAT | 0600);
 
+
+    setSHM<ProcAB>(PQ_A);
+
     semctl(semid_A, FULL, SETVAL, (int)0);
     semctl(semid_B, FULL, SETVAL, (int)0);
     semctl(semid_C, FULL, SETVAL, (int)0);
