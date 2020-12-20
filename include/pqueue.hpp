@@ -4,17 +4,24 @@
 #include <sched.h>
 #include <unistd.h>
 
-/*#include "message.hpp"
-#include "semaphoreop.hpp"*/
+/*#include "message.hpp"*/
+#include "semaphoreop.hpp"
 
 #define CAP 10
 #define SEM_NUM 3 /* semaphores per queue */
 #define PQ_A 'A'
 #define PQ_B 'B'
+#define PQ_C 'C'
+#define PQ_D 'D'
 #define KEY_A 45281
 #define KEY_B 45282
-#define SKEY_A 45283
-#define SKEY_B 45284
+#define KEY_C 45283
+#define KEY_D 45284
+
+#define SKEY_A 45285
+#define SKEY_B 45286
+#define SKEY_C 45287
+#define SKEY_D 45288
 
 #define EMPTY 0
 #define FULL 1
@@ -115,12 +122,23 @@ template <typename T> PQueue<T> *setSHM(char group)
     {
         GROUP_KEY = KEY_A;
         SEM_KEY = SKEY_A;
-    } else if (PQ_B == group) 
+    } 
+    else if (PQ_B == group) 
     {
         GROUP_KEY = KEY_B;
         SEM_KEY = SKEY_B;
-    } 
-    else 
+    }
+    else if (PQ_C == group)
+    {
+        GROUP_KEY = KEY_C;
+        SEM_KEY = SKEY_C;
+    }
+    else if (PQ_D == group)
+    {
+        GROUP_KEY = KEY_D;
+        SEM_KEY = SKEY_D;
+    }
+    else
     {
         std::cout << "Wrong group name!\n";
         exit(1);
