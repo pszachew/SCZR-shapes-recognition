@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <chrono>
 #include <opencv2/opencv.hpp>
-typedef std::chrono::time_point<std::chrono::system_clock> time_point;
+//typedef std::chrono::time_point<std::chrono::system_clock> time_point;
 
 typedef struct Timestamp 
 {
@@ -16,3 +16,19 @@ typedef struct ProcAB
 {
     cv::Mat img;
 } ProcAB;
+
+typedef struct ProcBC
+{
+    cv::Mat threshold;
+    cv::Mat cameraFeed;
+} ProcBC;
+
+typedef struct ProcCD
+{
+  std::chrono::high_resolution_clock::time_point time_point;
+} ProcCD;
+
+typedef struct ProcBD
+{
+  std::chrono::high_resolution_clock::time_point time_point;
+} ProcBD;

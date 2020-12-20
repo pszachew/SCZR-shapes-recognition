@@ -16,7 +16,10 @@ int main()
     int semid_D = semget(SKEY_D, SEM_NUM, IPC_CREAT | 0600);
 
 
-    setSHM<ProcAB>(PQ_A);
+    setSHM<ProcAB>(PQ_A); //queue A is created for communication beetwen process A(capture) and B(convert)
+    setSHM<ProcBC>(PQ_B); //queue B is created for communication beetwen process B(convert) and C(draw)
+    setSHM<ProcCD>(PQ_C); //queue C is created for communication beetwen process C(draw) and D(init)
+    setSHM<ProcBD>(PQ_D); //queue D is created for communication beetwen process B(convert) and D(init)
 
     semctl(semid_A, FULL, SETVAL, (int)0);
     semctl(semid_B, FULL, SETVAL, (int)0);

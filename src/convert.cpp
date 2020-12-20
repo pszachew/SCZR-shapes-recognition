@@ -29,21 +29,37 @@ int main(){
 
     loadConfig();
 
-    ProcAB m;
+    ProcAB m_in;
+    ProcBC m_out;
     int shmidA = shmget(KEY_A, sizeof(PQueue<ProcAB>), 0);
     PQueue<ProcAB> *pqA = (PQueue<ProcAB> *)shmat(shmidA, NULL, 0);
+    
+    int shmidB = shmget(KEY_B, sizeof(PQueue<ProcBC>),0);
+    PQueue<ProcBC> *pqB = (PQueue<ProcBC> *)shmat(shmidB, NULL, 0);
+   
     while(cv::waitKey(30) != ' '){
         down(pqA->getSemid(), FULL);
         down(pqA->getSemid(), BIN);        
         
-        m=pqA->pop();
+        m_in=pqA->pop();
         
         up(pqA->getSemid(), BIN);
         up(pqA->getSemid(), EMPTY);
 
-        cameraFeed=m.img;
+        cameraFeed=m_in.img;
         cv::cvtColor(cameraFeed,HSV,cv::COLOR_BGR2HSV); //convert to HSV
         cv::inRange(HSV,cv::Scalar(H_MIN,S_MIN,V_MIN),cv::Scalar(H_MAX,S_MAX,V_MAX),threshold); //threshold image based of config filters
+
+        m_out.cameraFeed=cameraFeed;
+        m_out.threshold=threshold;
+        
+        down(pqB->getSemid(), FULL);
+        down(pqB->getSemid(), BIN);        
+        
+        pqB->push(&m_out);
+        
+        up(pqB->getSemid(), BIN);
+        up(pqB->getSemid(), EMPTY);
 
         
     }
