@@ -31,5 +31,8 @@ target_link_libraries(convert ${OpenCV_LIBS})
 add_executable(draw src/draw.cpp src/pqueue.cpp src/semaphoreop.cpp) 
 target_link_libraries(draw ${OpenCV_LIBS})
 
+add_executable(destroyer src/destroyer.cpp src/pqueue.cpp src/semaphoreop.cpp) 
+target_link_libraries(destroyer ${OpenCV_LIBS})
+
 add_executable(configure src/configure.cpp)
 target_link_libraries(configure ${OpenCV_LIBS})
