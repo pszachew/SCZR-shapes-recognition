@@ -7,8 +7,7 @@ cd build
 cmake ..
 make
 ```
-Firstly you need to configure which color you want to track
-Because of that you need to run:
+Firstly you need to configure which color you want to track:
 ```
 ./configure
 ```
