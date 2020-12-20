@@ -19,5 +19,11 @@ include_directories(
     ${GTKMM_INCLUDE_DIRS}
 )
 
-add_executable(capture capture.cpp)
+add_executable(capture src/capture.cpp)
 target_link_libraries(capture ${OpenCV_LIBS})
+
+add_executable(convert src/convert.cpp)
+target_link_libraries(convert ${OpenCV_LIBS})
+
+add_executable(configure src/configure.cpp)
+target_link_libraries(configure ${OpenCV_LIBS})

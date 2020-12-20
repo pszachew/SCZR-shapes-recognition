@@ -1,0 +1,4 @@
+/home/kostesky/Desktop/SCZR/SCZR-shapes-recognition/CMakeFiles/edit_cache.dir
+/home/kostesky/Desktop/SCZR/SCZR-shapes-recognition/CMakeFiles/rebuild_cache.dir
+/home/kostesky/Desktop/SCZR/SCZR-shapes-recognition/CMakeFiles/convert.dir
+/home/kostesky/Desktop/SCZR/SCZR-shapes-recognition/CMakeFiles/capture.dir
