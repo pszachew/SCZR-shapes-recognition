@@ -19,10 +19,13 @@ include_directories(
     ${GTKMM_INCLUDE_DIRS}
 )
 
-add_executable(capture src/capture.cpp)
+add_executable(init src/initializer.cpp src/pqueue.cpp src/semaphoreop.cpp)
+target_link_libraries(init ${OpenCV_LIBS})
+
+add_executable(capture src/capture.cpp src/pqueue.cpp src/semaphoreop.cpp)
 target_link_libraries(capture ${OpenCV_LIBS})
 
-add_executable(convert src/convert.cpp)
+add_executable(convert src/convert.cpp src/pqueue.cpp src/semaphoreop.cpp) 
 target_link_libraries(convert ${OpenCV_LIBS})
 
 add_executable(configure src/configure.cpp)

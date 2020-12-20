@@ -41,7 +41,6 @@ template <typename T> class PQueue
 
     bool push(T *m)
     {
-        m->tstamp.push_time = std::chrono::system_clock::now();
         this->buf[this->bufSize] = *m;
         (this->bufSize)++;
         return true;
@@ -51,21 +50,20 @@ template <typename T> class PQueue
     {
         T m;
 
-            if (this->bufSize()==0)
+            if (this->bufSize==0)
             {
 
             }
             else
             {
                 m=this->buf[0];
-                m.tstamp.pop_time = std::chrono::system_clock::now();
                 if (this->bufSize==1) 
                 {
                     this->bufSize=0;
                 }
                 else
                 {
-                    for (int index=0; i<this->bufSize-1; ++index)
+                    for (int index=0; index<this->bufSize-1; ++index)
                     {
                         this->buf[index]=this->buf[index+1];
                     }
