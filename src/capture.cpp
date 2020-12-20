@@ -12,8 +12,9 @@ int main(){
         return -1;
     }
 
-    while(capture.read(cameraFeed)){
+    while(capture.read(cameraFeed && cv::waitKey(30) != ' ')){
         cv::imshow("Original",cameraFeed);
-        cv::waitKey(30);
+
+        
     }
 }
