@@ -38,6 +38,9 @@ int main(){
     PQueue<ProcBC> *pqB = (PQueue<ProcBC> *)shmat(shmidB, NULL, 0);
    
     while(cv::waitKey(30) != ' '){
+
+        auto t1 = std::chrono::high_resolution_clock::now(); //receive image - timestamp
+
         down(pqA->getSemid(), FULL);
         down(pqA->getSemid(), BIN);        
         
@@ -61,7 +64,7 @@ int main(){
         up(pqB->getSemid(), BIN);
         up(pqB->getSemid(), EMPTY);
 
-        
+        auto t2 = std::chrono::high_resolution_clock::now(); // show images - timestamp
     }
 
 }

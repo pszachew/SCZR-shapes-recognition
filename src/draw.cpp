@@ -19,6 +19,8 @@ int main(){
 
     while(cv::waitKey(30) != ' '){
 
+        auto t1 = std::chrono::high_resolution_clock::now(); //receive images - timestamp
+
         down(pqB->getSemid(), FULL);
         down(pqB->getSemid(), BIN);        
         
@@ -38,8 +40,10 @@ int main(){
             drawContours(cameraFeed, contours, (int)i, cv::Scalar(255, 0, 0), 2, cv::LINE_8, hierarchy, 0);
         }
 
+        auto t2 = std::chrono::high_resolution_clock::now(); // show images - timestamp
         cv::imshow("Original",cameraFeed);
         cv::imshow("Filtered",threshold);
+        
     }
 
 }
