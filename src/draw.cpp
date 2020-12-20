@@ -12,7 +12,7 @@ int main(){
 
     
     int shmidC = shmget(KEY_C, sizeof(PQueue<ProcCD>), 0);
-    PQueue<ProcCD> *pqA = (PQueue<ProcCD> *)shmat(shmidC, NULL, 0);
+    PQueue<ProcCD> *pqC = (PQueue<ProcCD> *)shmat(shmidC, NULL, 0);
 
     int shmidB = shmget(KEY_B, sizeof(PQueue<ProcBC>),0);
     PQueue<ProcBC> *pqB = (PQueue<ProcBC> *)shmat(shmidB, NULL, 0);
@@ -41,6 +41,18 @@ int main(){
         }
 
         auto t2 = std::chrono::high_resolution_clock::now(); // show images - timestamp
+
+        m_out.time_in=t1;
+        m_out.time_out=t2;
+
+        down(pqC->getSemid(), FULL);
+        down(pqC->getSemid(), BIN);        
+        
+        pqC->push(&m_out);
+        
+        up(pqC->getSemid(), BIN);
+        up(pqC->getSemid(), EMPTY);
+
         cv::imshow("Original",cameraFeed);
         cv::imshow("Filtered",threshold);
         

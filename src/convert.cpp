@@ -30,12 +30,16 @@ int main(){
     loadConfig();
 
     ProcAB m_in;
-    ProcBC m_out;
+    ProcBC m_outC;
+    ProcBD m_outD;
     int shmidA = shmget(KEY_A, sizeof(PQueue<ProcAB>), 0);
     PQueue<ProcAB> *pqA = (PQueue<ProcAB> *)shmat(shmidA, NULL, 0);
     
     int shmidB = shmget(KEY_B, sizeof(PQueue<ProcBC>),0);
     PQueue<ProcBC> *pqB = (PQueue<ProcBC> *)shmat(shmidB, NULL, 0);
+
+    int shmidD = shmget(KEY_D, sizeof(PQueue<ProcBD>),0);
+    PQueue<ProcBD> *pqD = (PQueue<ProcBD> *)shmat(shmidD, NULL, 0);
    
     while(cv::waitKey(30) != ' '){
 
@@ -53,18 +57,30 @@ int main(){
         cv::cvtColor(cameraFeed,HSV,cv::COLOR_BGR2HSV); //convert to HSV
         cv::inRange(HSV,cv::Scalar(H_MIN,S_MIN,V_MIN),cv::Scalar(H_MAX,S_MAX,V_MAX),threshold); //threshold image based of config filters
 
-        m_out.cameraFeed=cameraFeed;
-        m_out.threshold=threshold;
+        m_outC.cameraFeed=cameraFeed;
+        m_outC.threshold=threshold;
         
         down(pqB->getSemid(), FULL);
         down(pqB->getSemid(), BIN);        
         
-        pqB->push(&m_out);
+        pqB->push(&m_outC);
         
         up(pqB->getSemid(), BIN);
         up(pqB->getSemid(), EMPTY);
 
         auto t2 = std::chrono::high_resolution_clock::now(); // show images - timestamp
+
+        m_outD.time_in=t1;
+        m_outD.time_out=t2;
+
+        down(pqD->getSemid(), FULL);
+        down(pqD->getSemid(), BIN);        
+        
+        pqD->push(&m_outD);
+        
+        up(pqD->getSemid(), BIN);
+        up(pqD->getSemid(), EMPTY);
+
     }
 
 }
