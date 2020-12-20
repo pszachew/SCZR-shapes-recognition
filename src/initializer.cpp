@@ -38,6 +38,8 @@ int main()
     semctl(semid_C, BIN, SETVAL, (int)1);
     semctl(semid_D, BIN, SETVAL, (int)1);
 
+    std::cout<<"\nZainicjowano pamiec wspoldzielona\n";
+
     // ProcCD m_inC; //times from draw
     // ProcBD m_inB; //times from convert
     

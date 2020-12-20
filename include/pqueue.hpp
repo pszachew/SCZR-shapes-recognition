@@ -7,7 +7,7 @@
 #include "message.hpp"
 #include "semaphoreop.hpp"
 
-#define CAP 10
+#define CAP 100
 #define SEM_NUM 3 /* semaphores per queue */
 #define PQ_A 'A'
 #define PQ_B 'B'

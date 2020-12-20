@@ -63,26 +63,26 @@ int main(){
         m_outC.cameraFeed=cameraFeed;
         m_outC.threshold=threshold;
         
-        down(pqB->getSemid(), FULL);
+        down(pqB->getSemid(), EMPTY);
         down(pqB->getSemid(), BIN);        
         
         pqB->push(&m_outC);
         
         up(pqB->getSemid(), BIN);
-        up(pqB->getSemid(), EMPTY);
+        up(pqB->getSemid(), FULL);
 
         auto t2 = std::chrono::high_resolution_clock::now(); // show images - timestamp
 
         m_outD.time_in=t1;
         m_outD.time_out=t2;
 
-        down(pqD->getSemid(), FULL);
+        down(pqD->getSemid(), EMPTY);
         down(pqD->getSemid(), BIN);        
         
         pqD->push(&m_outD);
         
         up(pqD->getSemid(), BIN);
-        up(pqD->getSemid(), EMPTY);
+        up(pqD->getSemid(), FULL);
 
     }
 

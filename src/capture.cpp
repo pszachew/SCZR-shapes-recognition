@@ -19,7 +19,8 @@ int main(){
         return -1;
     }
 
-    while(capture.read(cameraFeed) && cv::waitKey(30) != ' '){
+    while(capture.read(cameraFeed) && cv::waitKey(30) != ' ')
+    {
         cv::imshow("Original",cameraFeed);
         message.img=cameraFeed;
         down(pqA->getSemid(), EMPTY);
@@ -29,7 +30,6 @@ int main(){
 
         up(pqA->getSemid(), BIN);
         up(pqA->getSemid(), FULL);
-
     }
 
 

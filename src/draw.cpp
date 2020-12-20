@@ -48,13 +48,13 @@ int main(){
         m_out.time_in=t1;
         m_out.time_out=t2;
 
-        down(pqC->getSemid(), FULL);
+        down(pqC->getSemid(), EMPTY);
         down(pqC->getSemid(), BIN);        
         
         pqC->push(&m_out);
         
         up(pqC->getSemid(), BIN);
-        up(pqC->getSemid(), EMPTY);
+        up(pqC->getSemid(), FULL);
 
         cv::imshow("Original",cameraFeed);
         cv::imshow("Filtered",threshold);
