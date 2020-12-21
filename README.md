@@ -2,7 +2,7 @@
 
 ## CvPlot library:
 ```
-sudo mv CvPlot /usr/include/
+sudo cp -r CvPlot /usr/include/
 ```
 
 ## Commands for build:
