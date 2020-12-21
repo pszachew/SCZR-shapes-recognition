@@ -6,9 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_compile_options(-Wall -Wextra -pedantic)
+add_compile_options(-Wall -Wextra)
 
-find_package(Python3 COMPONENTS Interpreter Development)
 find_package(OpenCV REQUIRED)
 find_package(PkgConfig)
 
@@ -21,8 +20,7 @@ include_directories(
 )
 
 add_executable(init src/initializer.cpp src/pqueue.cpp src/semaphoreop.cpp)
-target_include_directories(init PRIVATE ${Python3_INCLUDE_DIRS})
-target_link_libraries(init ${OpenCV_LIBS} Python3::Python)
+target_link_libraries(init ${OpenCV_LIBS})
 
 add_executable(capture src/capture.cpp src/pqueue.cpp src/semaphoreop.cpp)
 target_link_libraries(capture ${OpenCV_LIBS})

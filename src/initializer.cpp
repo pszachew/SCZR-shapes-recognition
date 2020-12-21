@@ -1,8 +1,9 @@
 #include "pqueue.hpp"
 #include <vector>
-#include "matplotlibcpp.h"
+#include <opencv2/opencv.hpp>
+#define CVPLOT_HEADER_ONLY
+#include <CvPlot/cvplot.h>
 
-namespace plt = matplotlibcpp;
 
 int main() 
 {
@@ -53,10 +54,9 @@ int main()
     int shmidC = shmget(KEY_C, sizeof(PQueue<ProcCD>), 0);
     PQueue<ProcCD> *pqC = (PQueue<ProcCD> *)shmat(shmidC, NULL, 0);
 
-    std::vector<double> delayABplot;
-    std::vector<double> delayBCplot;
+    std::vector<double> plotAB;
+    std::vector<double> plotBC;
 
-    int i = 0;
     while(1){
         down(pqD->getSemid(), FULL);
         down(pqD->getSemid(), BIN);        
@@ -67,7 +67,7 @@ int main()
         up(pqD->getSemid(), EMPTY);
 
         auto delayAB = std::chrono::duration_cast<std::chrono::milliseconds>( m_inB.receive_ts - m_inB.send_ts ).count();
-        delayABplot.push_back(delayAB);
+        plotAB.push_back(delayAB);
 
         down(pqC->getSemid(), FULL);
         down(pqC->getSemid(), BIN);        
@@ -78,14 +78,17 @@ int main()
         up(pqC->getSemid(), EMPTY);
 
         auto delayBC = std::chrono::duration_cast<std::chrono::milliseconds>( m_inC.receive_ts - m_inC.send_ts ).count();
-        delayBCplot.push_back(delayBC);
-        if(i==100){
-            plt::plot(delayABplot, {{"color", "red"}});
-            plt::plot(delayBCplot, {{"color", "blue"}});
-            plt::save("./delay.png");
-            i = 0;
-        }
-        ++i;
+        plotBC.push_back(delayBC);
+
+        //create plots
+        auto axesAB = CvPlot::plot(plotAB, "-r");
+        auto axesBC = CvPlot::plot(plotBC, "-b");
+        cv::Mat imgAB = axesAB.render(240, 320);
+        cv::Mat imgBC = axesBC.render(240, 320);
+
+        cv::imshow("Delay A-B", imgAB);
+        cv::imshow("Delay B-C", imgBC);
+        cv::waitKey(30);
     }
 
     return 0;
