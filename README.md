@@ -1,5 +1,10 @@
 # SCZR-shapes-recognition
 
+## CvPlot library:
+```
+sudo cp -r CvPlot /usr/include/
+```
+
 ## Commands for build:
 ```
 mkdir build
