@@ -57,6 +57,7 @@ int main()
     std::vector<double> plotAB;
     std::vector<double> plotBC;
 
+    std::cout << "PRESS SPACE TO EXIT" <<std::endl;
     while(1){
         down(pqD->getSemid(), FULL);
         down(pqD->getSemid(), BIN);        
@@ -83,12 +84,16 @@ int main()
         //create plots
         auto axesAB = CvPlot::plot(plotAB, "-r");
         auto axesBC = CvPlot::plot(plotBC, "-b");
-        cv::Mat imgAB = axesAB.render(240, 320);
-        cv::Mat imgBC = axesBC.render(240, 320);
+        cv::Mat imgAB = axesAB.render(480, 640);
+        cv::Mat imgBC = axesBC.render(480, 640);
 
         cv::imshow("Delay A-B", imgAB);
         cv::imshow("Delay B-C", imgBC);
-        cv::waitKey(30);
+        if(cv::waitKey(30) == ' '){
+            cv::imwrite("delayA-B.png", imgAB);
+            cv::imwrite("delayB-C.png", imgBC);
+            break;
+        }
     }
 
     return 0;

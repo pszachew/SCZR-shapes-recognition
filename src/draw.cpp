@@ -39,7 +39,8 @@ int main(){
 
         cv::Mat drawing = cv::Mat::zeros(cameraFeed.size(), CV_8UC3);
         for( size_t i = 0; i < contours.size(); i++ ){
-            drawContours(cameraFeed, contours, (int)i, cv::Scalar(255, 0, 0), 2, cv::LINE_8, hierarchy, 0);
+            cv::approxPolyDP(contours[i], contours[i], 0.01 * cv::arcLength(contours[i], true), true);
+            drawContours(cameraFeed, contours, (int)i, cv::Scalar(255, 0, 0), 2, cv::LINE_4, hierarchy, 0);
         }
 
         cv::imshow("Original",cameraFeed);

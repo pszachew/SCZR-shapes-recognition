@@ -59,6 +59,13 @@ int main(){
         cv::Mat cameraFeed(FRAME_WIDTH, FRAME_HEIGHT, CV_8UC3, m_in.img);
         cv::cvtColor(cameraFeed,HSV,cv::COLOR_BGR2HSV); //convert to HSV
         cv::inRange(HSV,cv::Scalar(H_MIN,S_MIN,V_MIN),cv::Scalar(H_MAX,S_MAX,V_MAX),threshold); //threshold image based of config filters
+        cv::blur(threshold, threshold, cv::Size(5, 5), cv::Point(-1, -1));
+        cv::Mat erodeElement = cv::getStructuringElement( cv::MORPH_RECT,cv::Size(3,3));
+        cv::erode(threshold,threshold,erodeElement);
+        cv::erode(threshold,threshold,erodeElement);
+        cv::Mat dilateElement = cv::getStructuringElement( cv::MORPH_RECT,cv::Size(5,5));
+        cv::dilate(threshold,threshold,dilateElement);
+        cv::dilate(threshold,threshold,dilateElement);
 
         memcpy(&m_outC.cameraFeed, cameraFeed.data, sizeof(uint8_t) * IMG_SIZE);
         memcpy(&m_outC.threshold, threshold.data, sizeof(uint8_t) * IMG_SIZE/3);
