@@ -44,8 +44,11 @@ int main(){
     int shmidD = shmget(KEY_D, sizeof(PQueue<ProcBD>),0);
     PQueue<ProcBD> *pqD = (PQueue<ProcBD> *)shmat(shmidD, NULL, 0);
    
+    m_in.A_delayOut = 0;
+   m_outC.B_delayOut = 0;
     while(cv::waitKey(30) != ' '){
 
+        auto t1 = std::chrono::high_resolution_clock::now();
         down(pqA->getSemid(), FULL);
         down(pqA->getSemid(), BIN);
         
@@ -53,8 +56,8 @@ int main(){
         
         up(pqA->getSemid(), BIN);
         up(pqA->getSemid(), EMPTY);
-
-        auto receive_ts = std::chrono::high_resolution_clock::now(); // timestamp receive from proccess A (capture)
+        auto t2 = std::chrono::high_resolution_clock::now();
+        m_outC.B_delayIn = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
 
         cv::Mat cameraFeed(FRAME_WIDTH, FRAME_HEIGHT, CV_8UC3, m_in.img);
         cv::cvtColor(cameraFeed,HSV,cv::COLOR_BGR2HSV); //convert to HSV
@@ -69,8 +72,10 @@ int main(){
 
         memcpy(&m_outC.cameraFeed, cameraFeed.data, sizeof(uint8_t) * IMG_SIZE);
         memcpy(&m_outC.threshold, threshold.data, sizeof(uint8_t) * IMG_SIZE/3);
-        m_outC.send_ts = std::chrono::high_resolution_clock::now(); // timestamp send to proccess C (draw)
-    
+
+        m_outC.A_delayOut = m_in.A_delayOut;
+
+        t1 = std::chrono::high_resolution_clock::now();
         down(pqB->getSemid(), EMPTY);
         down(pqB->getSemid(), BIN);        
         
@@ -78,18 +83,19 @@ int main(){
         
         up(pqB->getSemid(), BIN);
         up(pqB->getSemid(), FULL);
+        t2 = std::chrono::high_resolution_clock::now();
+        m_outC.B_delayOut = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
 
+        // m_outD.receive_ts = receive_ts;
+        // m_outD.send_ts = m_in.send_ts;
 
-        m_outD.receive_ts = receive_ts;
-        m_outD.send_ts = m_in.send_ts;
-
-        down(pqD->getSemid(), EMPTY);
-        down(pqD->getSemid(), BIN);        
+        // down(pqD->getSemid(), EMPTY);
+        // down(pqD->getSemid(), BIN);        
         
-        pqD->push(&m_outD);
+        // pqD->push(&m_outD);
         
-        up(pqD->getSemid(), BIN);
-        up(pqD->getSemid(), FULL);
+        // up(pqD->getSemid(), BIN);
+        // up(pqD->getSemid(), FULL);
 
     }
 

@@ -18,8 +18,13 @@ int main(){
     int shmidB = shmget(KEY_B, sizeof(PQueue<ProcBC>),0);
     PQueue<ProcBC> *pqB = (PQueue<ProcBC> *)shmat(shmidB, NULL, 0);
 
+    m_in.A_delayOut = 0;
+    m_in.B_delayIn = 0;
+    m_in.B_delayOut = 0;
+    m_out.C_delayIn = 0;
     while(cv::waitKey(30) != ' '){
 
+        auto t1 = std::chrono::high_resolution_clock::now();
         down(pqB->getSemid(), FULL);
         down(pqB->getSemid(), BIN);        
         
@@ -27,8 +32,8 @@ int main(){
         
         up(pqB->getSemid(), BIN);
         up(pqB->getSemid(), EMPTY);
-
-        auto receive_ts = std::chrono::high_resolution_clock::now(); // timestamp receive from proccess B (convert)
+        auto t2 = std::chrono::high_resolution_clock::now();
+        m_out.C_delayIn = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
 
         cv::Mat cameraFeed(FRAME_WIDTH, FRAME_HEIGHT, CV_8UC3, m_in.cameraFeed);
         cv::Mat threshold(FRAME_WIDTH, FRAME_HEIGHT, CV_8UC1, m_in.threshold);
@@ -45,12 +50,12 @@ int main(){
 
         cv::imshow("Original",cameraFeed);
         cv::imshow("Filtered",threshold);
-        auto show_ts = std::chrono::high_resolution_clock::now(); // show images - timestamp
 
-        m_out.receive_ts = receive_ts;
-        m_out.send_ts = m_in.send_ts;
-        m_out.show_ts = show_ts;
+        m_out.A_delayOut = m_in.A_delayOut;
+        m_out.B_delayIn = m_in.B_delayIn;
+        m_out.B_delayOut = m_in.B_delayOut;
 
+        t1 = std::chrono::high_resolution_clock::now();
         down(pqC->getSemid(), EMPTY);
         down(pqC->getSemid(), BIN);        
         
@@ -58,5 +63,7 @@ int main(){
         
         up(pqC->getSemid(), BIN);
         up(pqC->getSemid(), FULL);
+        t2 = std::chrono::high_resolution_clock::now();
+        m_out.C_delayOut = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
     }
 }

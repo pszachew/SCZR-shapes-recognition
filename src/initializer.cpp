@@ -54,21 +54,21 @@ int main()
     int shmidC = shmget(KEY_C, sizeof(PQueue<ProcCD>), 0);
     PQueue<ProcCD> *pqC = (PQueue<ProcCD> *)shmat(shmidC, NULL, 0);
 
-    std::vector<double> plotAB;
-    std::vector<double> plotBC;
+    std::vector<double> A_plot_delayOut;
+    std::vector<double> B_plot_delayIn;
+    std::vector<double> B_plot_delayOut;
+    std::vector<double> C_plot_delayIn;
+    std::vector<double> C_plot_delayOut;
 
     std::cout << "PRESS SPACE TO EXIT" <<std::endl;
     while(1){
-        down(pqD->getSemid(), FULL);
-        down(pqD->getSemid(), BIN);        
+        // down(pqD->getSemid(), FULL);
+        // down(pqD->getSemid(), BIN);        
         
-        m_inB=pqD->pop();
+        // m_inB=pqD->pop();
         
-        up(pqD->getSemid(), BIN);
-        up(pqD->getSemid(), EMPTY);
-
-        auto delayAB = std::chrono::duration_cast<std::chrono::milliseconds>( m_inB.receive_ts - m_inB.send_ts ).count();
-        plotAB.push_back(delayAB);
+        // up(pqD->getSemid(), BIN);
+        // up(pqD->getSemid(), EMPTY);
 
         down(pqC->getSemid(), FULL);
         down(pqC->getSemid(), BIN);        
@@ -78,20 +78,32 @@ int main()
         up(pqC->getSemid(), BIN);
         up(pqC->getSemid(), EMPTY);
 
-        auto delayBC = std::chrono::duration_cast<std::chrono::milliseconds>( m_inC.receive_ts - m_inC.send_ts ).count();
-        plotBC.push_back(delayBC);
+        A_plot_delayOut.push_back(m_inC.A_delayOut);
+        B_plot_delayIn.push_back(m_inC.B_delayIn);
+        B_plot_delayOut.push_back(m_inC.B_delayOut);
+        C_plot_delayIn.push_back(m_inC.C_delayIn);
+        C_plot_delayOut.push_back(m_inC.C_delayOut);
 
         //create plots
-        auto axesAB = CvPlot::plot(plotAB, "-r");
-        auto axesBC = CvPlot::plot(plotBC, "-b");
-        cv::Mat imgAB = axesAB.render(480, 640);
-        cv::Mat imgBC = axesBC.render(480, 640);
+        auto axesA = CvPlot::plot(A_plot_delayOut, " -b");
+        auto axesB = CvPlot::makePlotAxes();
+        axesB.create<CvPlot::Series>(B_plot_delayIn, "-r");
+        axesB.create<CvPlot::Series>(B_plot_delayOut, "-b");
+        auto axesC = CvPlot::makePlotAxes();
+        axesC.create<CvPlot::Series>(C_plot_delayIn, "-r");
+        axesC.create<CvPlot::Series>(C_plot_delayOut, "-b");
 
-        cv::imshow("Delay A-B", imgAB);
-        cv::imshow("Delay B-C", imgBC);
+        cv::Mat imgA = axesA.render(480, 640);
+        cv::Mat imgB = axesB.render(480, 640);
+        cv::Mat imgC = axesC.render(480, 640);
+
+        cv::imshow("Times in semaphores of process A", imgA);
+        cv::imshow("Times in semaphores of process B", imgB);
+        cv::imshow("Times in semaphores of process C", imgC);
         if(cv::waitKey(30) == ' '){
-            cv::imwrite("delayA-B.png", imgAB);
-            cv::imwrite("delayB-C.png", imgBC);
+            cv::imwrite("delayA.png", imgA);
+            cv::imwrite("delayB.png", imgB);
+            cv::imwrite("delayC.png", imgC);
             break;
         }
     }
