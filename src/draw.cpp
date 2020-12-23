@@ -7,7 +7,7 @@
 
 int main(){
 
-    std::cout<<"draw"<<std::endl;
+    std::cout<<"Shape tracking running"<<std::endl;
 
     ProcBC m_in;
     ProcCD m_out;
@@ -18,13 +18,8 @@ int main(){
     int shmidB = shmget(KEY_B, sizeof(PQueue<ProcBC>),0);
     PQueue<ProcBC> *pqB = (PQueue<ProcBC> *)shmat(shmidB, NULL, 0);
 
-    m_in.A_delayOut = 0;
-    m_in.B_delayIn = 0;
-    m_in.B_delayOut = 0;
-    m_out.C_delayIn = 0;
-    while(cv::waitKey(30) != ' '){
-
-        auto t1 = std::chrono::high_resolution_clock::now();
+    while(1){
+        cv::waitKey(DELAY);
         down(pqB->getSemid(), FULL);
         down(pqB->getSemid(), BIN);        
         
@@ -32,8 +27,8 @@ int main(){
         
         up(pqB->getSemid(), BIN);
         up(pqB->getSemid(), EMPTY);
-        auto t2 = std::chrono::high_resolution_clock::now();
-        m_out.C_delayIn = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
+        auto t = std::chrono::high_resolution_clock::now();
+        m_out.BC_delay = std::chrono::duration_cast<std::chrono::milliseconds>( t - m_in.timestamp ).count();
 
         cv::Mat cameraFeed(FRAME_WIDTH, FRAME_HEIGHT, CV_8UC3, m_in.cameraFeed);
         cv::Mat threshold(FRAME_WIDTH, FRAME_HEIGHT, CV_8UC1, m_in.threshold);
@@ -48,14 +43,9 @@ int main(){
             drawContours(cameraFeed, contours, (int)i, cv::Scalar(255, 0, 0), 2, cv::LINE_4, hierarchy, 0);
         }
 
-        cv::imshow("Original",cameraFeed);
-        cv::imshow("Filtered",threshold);
+        cv::imshow("Draw",cameraFeed);
 
-        m_out.A_delayOut = m_in.A_delayOut;
-        m_out.B_delayIn = m_in.B_delayIn;
-        m_out.B_delayOut = m_in.B_delayOut;
-
-        t1 = std::chrono::high_resolution_clock::now();
+        m_out.timestamp = std::chrono::high_resolution_clock::now();
         down(pqC->getSemid(), EMPTY);
         down(pqC->getSemid(), BIN);        
         
@@ -63,7 +53,5 @@ int main(){
         
         up(pqC->getSemid(), BIN);
         up(pqC->getSemid(), FULL);
-        t2 = std::chrono::high_resolution_clock::now();
-        m_out.C_delayOut = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
     }
 }

@@ -1,14 +1,17 @@
 #!/bin/bash
 
+./destroyer
+
 ./init &
-PID3=$!
-sleep 3
-./capture &
 PID=$!
-./convert &
+./capture &
 PID1=$!
-./draw
+./convert &
 PID2=$!
-#chrt -p $PID
-#chrt -p $PID1
-#chrt -p $PID2
+./draw &
+PID3=$!
+chrt -p $PID1
+chrt -p $PID2
+chrt -p $PID3
+
+# python3 ./plots.py build/delays.log

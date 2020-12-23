@@ -3,7 +3,11 @@
 #include <opencv2/opencv.hpp>
 #define CVPLOT_HEADER_ONLY
 #include <CvPlot/cvplot.h>
+#include <fstream>
 
+
+#define PLOT_WIDTH 800
+#define PLOT_HEIGHT 400
 
 int main() 
 {
@@ -15,7 +19,7 @@ int main()
     /*setSHM<ImageRaw>(PQ_A);
     setSHM<ProcessedValue>(PQ_B);*/
 
-    std::cout<<"init"<<std::endl;
+    std::cout<<"Initilizer running"<<std::endl;
 
     int semid_A = semget(SKEY_A, SEM_NUM, IPC_CREAT | 0600);
     int semid_B = semget(SKEY_B, SEM_NUM, IPC_CREAT | 0600);
@@ -43,7 +47,7 @@ int main()
     semctl(semid_C, BIN, SETVAL, (int)1);
     semctl(semid_D, BIN, SETVAL, (int)1);
 
-    std::cout<<"\nZainicjowano pamiec wspoldzielona\n";
+    std::cout<<"Zainicjowano pamiec wspoldzielona\n";
 
     ProcCD m_inC; //times from draw
     ProcBD m_inB; //times from convert
@@ -54,21 +58,27 @@ int main()
     int shmidC = shmget(KEY_C, sizeof(PQueue<ProcCD>), 0);
     PQueue<ProcCD> *pqC = (PQueue<ProcCD> *)shmat(shmidC, NULL, 0);
 
-    std::vector<double> A_plot_delayOut;
-    std::vector<double> B_plot_delayIn;
-    std::vector<double> B_plot_delayOut;
-    std::vector<double> C_plot_delayIn;
-    std::vector<double> C_plot_delayOut;
+    std::vector<double> delay_AB;
+    std::vector<double> delay_BC;
+    std::vector<double> delay_BD;
+    std::vector<double> delay_CD;
+
+    //log files
+    std::ofstream log("delays.log");
 
     std::cout << "PRESS SPACE TO EXIT" <<std::endl;
+    int i = 0;
     while(1){
-        // down(pqD->getSemid(), FULL);
-        // down(pqD->getSemid(), BIN);        
+        down(pqD->getSemid(), FULL);
+        down(pqD->getSemid(), BIN);        
         
-        // m_inB=pqD->pop();
+        m_inB=pqD->pop();
         
-        // up(pqD->getSemid(), BIN);
-        // up(pqD->getSemid(), EMPTY);
+        up(pqD->getSemid(), BIN);
+        up(pqD->getSemid(), EMPTY);
+        auto t = std::chrono::high_resolution_clock::now();
+
+        auto ts_delay_BD = std::chrono::duration_cast<std::chrono::milliseconds>( t - m_inB.timestamp ).count();
 
         down(pqC->getSemid(), FULL);
         down(pqC->getSemid(), BIN);        
@@ -77,33 +87,29 @@ int main()
         
         up(pqC->getSemid(), BIN);
         up(pqC->getSemid(), EMPTY);
+        t = std::chrono::high_resolution_clock::now();
 
-        A_plot_delayOut.push_back(m_inC.A_delayOut);
-        B_plot_delayIn.push_back(m_inC.B_delayIn);
-        B_plot_delayOut.push_back(m_inC.B_delayOut);
-        C_plot_delayIn.push_back(m_inC.C_delayIn);
-        C_plot_delayOut.push_back(m_inC.C_delayOut);
+        auto ts_delay_CD = std::chrono::duration_cast<std::chrono::milliseconds>( t - m_inC.timestamp ).count();
+        cv::Mat imgDelay;
+        if(i++ >= 40){
+            delay_AB.push_back(m_inB.AB_delay);
+            delay_BC.push_back(m_inC.BC_delay);
+            delay_BD.push_back(ts_delay_BD);
+            delay_CD.push_back(ts_delay_CD);
+            log << m_inB.AB_delay << " " << m_inC.BC_delay << " " << ts_delay_BD << " " << ts_delay_CD << std::endl;
 
-        //create plots
-        auto axesA = CvPlot::plot(A_plot_delayOut, " -b");
-        auto axesB = CvPlot::makePlotAxes();
-        axesB.create<CvPlot::Series>(B_plot_delayIn, "-r");
-        axesB.create<CvPlot::Series>(B_plot_delayOut, "-b");
-        auto axesC = CvPlot::makePlotAxes();
-        axesC.create<CvPlot::Series>(C_plot_delayIn, "-r");
-        axesC.create<CvPlot::Series>(C_plot_delayOut, "-b");
+            auto axesDelay = CvPlot::makePlotAxes();
+            axesDelay.create<CvPlot::Series>(delay_AB, "-r");
+            axesDelay.create<CvPlot::Series>(delay_BC, "-b");
+            axesDelay.create<CvPlot::Series>(delay_BD, "-g");
+            axesDelay.create<CvPlot::Series>(delay_CD, "-yellow");
 
-        cv::Mat imgA = axesA.render(480, 640);
-        cv::Mat imgB = axesB.render(480, 640);
-        cv::Mat imgC = axesC.render(480, 640);
+            imgDelay = axesDelay.render(PLOT_HEIGHT, PLOT_WIDTH);
+            cv::imshow("Delays", imgDelay);
 
-        cv::imshow("Times in semaphores of process A", imgA);
-        cv::imshow("Times in semaphores of process B", imgB);
-        cv::imshow("Times in semaphores of process C", imgC);
-        if(cv::waitKey(30) == ' '){
-            cv::imwrite("delayA.png", imgA);
-            cv::imwrite("delayB.png", imgB);
-            cv::imwrite("delayC.png", imgC);
+        }
+        if(cv::waitKey(DELAY) == ' '){
+            cv::imwrite("plots.png", imgDelay);
             break;
         }
     }
