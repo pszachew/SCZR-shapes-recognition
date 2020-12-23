@@ -21,7 +21,7 @@ int main(){
 
     while(capture.read(cameraFeed))
     {
-        // cv::waitKey(DELAY);
+        cv::waitKey(DELAY);
         cv::imshow("Camera",cameraFeed);
         cv::Mat resized;
         cv::resize(cameraFeed, resized,cv::Size(FRAME_HEIGHT, FRAME_WIDTH));

@@ -90,24 +90,23 @@ int main()
         t = std::chrono::high_resolution_clock::now();
 
         auto ts_delay_CD = std::chrono::duration_cast<std::chrono::milliseconds>( t - m_inC.timestamp ).count();
-        cv::Mat imgDelay;
-        if(i++ >= 40){
+
+        if(i++ >= 100){
             delay_AB.push_back(m_inB.AB_delay);
             delay_BC.push_back(m_inC.BC_delay);
             delay_BD.push_back(ts_delay_BD);
             delay_CD.push_back(ts_delay_CD);
             log << m_inB.AB_delay << " " << m_inC.BC_delay << " " << ts_delay_BD << " " << ts_delay_CD << std::endl;
-
-            auto axesDelay = CvPlot::makePlotAxes();
-            axesDelay.create<CvPlot::Series>(delay_AB, "-r");
-            axesDelay.create<CvPlot::Series>(delay_BC, "-b");
-            axesDelay.create<CvPlot::Series>(delay_BD, "-g");
-            axesDelay.create<CvPlot::Series>(delay_CD, "-yellow");
-
-            imgDelay = axesDelay.render(PLOT_HEIGHT, PLOT_WIDTH);
-            cv::imshow("Delays", imgDelay);
-
         }
+        auto axesDelay = CvPlot::makePlotAxes();
+        axesDelay.create<CvPlot::Series>(delay_AB, "-r");
+        axesDelay.create<CvPlot::Series>(delay_BC, "-b");
+        axesDelay.create<CvPlot::Series>(delay_BD, "-g");
+        axesDelay.create<CvPlot::Series>(delay_CD, "-y");
+
+        cv::Mat imgDelay = axesDelay.render(PLOT_HEIGHT, PLOT_WIDTH);
+        cv::imshow("Delays", imgDelay);
+
         if(cv::waitKey(DELAY) == ' '){
             cv::imwrite("plots.png", imgDelay);
             break;

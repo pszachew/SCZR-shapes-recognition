@@ -46,7 +46,7 @@ int main(){
    
 
     while(1){
-        // cv::waitKey(DELAY);
+        cv::waitKey(DELAY);
 
         down(pqA->getSemid(), FULL);
         down(pqA->getSemid(), BIN);
