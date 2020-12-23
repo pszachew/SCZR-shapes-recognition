@@ -38,8 +38,8 @@ def main():
 	colors = ['red', 'green', 'blue', 'yellow']
 
 	plt.hist(delays, 20, density=False, color=colors,label=names)
+	plt.xlabel("Delay [ms]")
 	plt.legend(prop={'size': 10})
-	# plt.xlim([0,100])
 	plt.savefig('build/delay_all.png')
 	plt.clf()
 

@@ -66,8 +66,6 @@ int main()
     //log files
     std::ofstream log("delays.log");
 
-    std::cout << "PRESS SPACE TO EXIT" <<std::endl;
-    int i = 0;
     while(1){
         down(pqD->getSemid(), FULL);
         down(pqD->getSemid(), BIN);        
@@ -91,13 +89,12 @@ int main()
 
         auto ts_delay_CD = std::chrono::duration_cast<std::chrono::milliseconds>( t - m_inC.timestamp ).count();
 
-        if(i++ >= 100){
-            delay_AB.push_back(m_inB.AB_delay);
-            delay_BC.push_back(m_inC.BC_delay);
-            delay_BD.push_back(ts_delay_BD);
-            delay_CD.push_back(ts_delay_CD);
-            log << m_inB.AB_delay << " " << m_inC.BC_delay << " " << ts_delay_BD << " " << ts_delay_CD << std::endl;
-        }
+		delay_AB.push_back(m_inB.AB_delay);
+		delay_BC.push_back(m_inC.BC_delay);
+		delay_BD.push_back(ts_delay_BD);
+		delay_CD.push_back(ts_delay_CD);
+		log << m_inB.AB_delay << " " << m_inC.BC_delay << " " << ts_delay_BD << " " << ts_delay_CD << std::endl;
+
         auto axesDelay = CvPlot::makePlotAxes();
         axesDelay.create<CvPlot::Series>(delay_AB, "-r");
         axesDelay.create<CvPlot::Series>(delay_BC, "-b");
